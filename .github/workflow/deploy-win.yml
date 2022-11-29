@@ -1,0 +1,27 @@
+name: deploy game for win32
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: '16.11, 17.3'
+          msbuild-architecture: x86
+
+      - name: build client
+        run: msbuild projects/msvc2022/angelscript.vcxproj -property:Configuration=Release
+
+      - name: Upload Binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows binaries
+          path: |
+            build/*.lib
